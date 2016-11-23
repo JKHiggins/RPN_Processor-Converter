@@ -3,69 +3,70 @@ OPERATORS = { '^' => 5, '*' => 4, '/' => 3, '+' => 2, '-' => 1 }
 class RPN
   def self.calculate(expression)
     operands = []
-    # expect a value to be space delimited
+    # Expect a value to be space delimited
     expression.split(/\s+/).each do |op|
       if OPERATORS.keys.include?(op)
-        # if we find an operator we want to apply it to the previous 2 values in
-        # the stack and push the result onto the stack
+        # If we find an operator we want to apply it to the previous 2 values in
+        # the stack and push the result onto the stack.
         operands.push(apply_operator(operands, op))
       else
-        # if we dont find an operator we just push the value onto the stack
+        # If we dont find an operator we just push the value onto the stack.
         operands.push(op.to_f)
       end
     end
 
-    # once we're done, theres only the result on the stack so we return it
+    # Once we're done, theres only the result on the stack so we return it.
     operands.pop
   end
 
   def self.apply_operator(operands, operator)
-    # pop last 2 and apply the operator
+    # Pop last 2 and apply the operator.
     operand2 = operands.pop
     operand1 = operands.pop
 
-    # convert a common exponent key to rubys specific one
+    # Convert a common exponent key to rubys specific one.
     if operator == "^"
       operator = "**"
     end
 
-    # apply the operator to the values here
+    # Apply the operator to the values here.
     operand1.send(operator.to_sym, operand2)
   end
 end
 
 class Infix
   def self.calculate(expression)
-    # expect a value to be space delimited and split it into an array of components
-    trimmed = expression.gsub(/\s+/, " ").split(/\s+/)
-    # parse the split components
-    rpn_expression = parse(trimmed)
+    # Expect a value to be space delimited and split it into an array of components.
+    components = expression.gsub(/\s+/, " ").split(/\s+/)
+    # Parse the split components.
+    rpn_expression = parse(components)
 
-    # use our calculator that we made above to take the parsed infix expression
+    # Use our calculator that we made above to take the parsed infix expression.
     RPN.calculate(rpn_expression.join(' '))
   end
 
   def self.parse(expression_ops)
-    # we're gonna use two stacks, one for staging and one for the final result
+    # We're gonna use two stacks, one for staging(temp) and one
+    # for the final result(rpn).
     rpn_stack = []
     temp_stack = []
     tracked_op = nil
 
     expression_ops.each do |op|
-      # push everything onto the temp stack for manipulation in the future
+      # Push everything onto the temp stack for manipulation in the future.
       temp_stack.push(op)
 
       if OPERATORS.keys.include?(op)
-        # make sure we have a tracked op
+        # Make sure we have a tracked op.
         if tracked_op.nil?
           tracked_op = op
         end
 
-        # compare precedence to enforce order of operations
+        # Compare precedence to enforce order of operations.
         if compare_precedence(OPERATORS[op], OPERATORS[tracked_op])
-          # if the current operator is higher precedence than the tracked
+          # If the current operator is higher precedence than the tracked
           # we track the new operator and push the second value to the rpn
-          # stack, leaving the previously tracked operator on the temp stack
+          # stack, leaving the previously tracked operator on the temp stack.
           stack_op = temp_stack.pop
           stack_val = temp_stack.pop
           tracked_op = op
@@ -75,18 +76,18 @@ class Infix
         else
           # If the current operator is lower precedence than the new operator
           # we pop 3, push the value(second location) followed by the
-          # operator(third location).
+          # operator(third location) to the rpn stack.
           # A few safe assumptions about the state of the stack have been made
-          # to make this work
-          # 1) we know if we find an operator there is always an operator 2 back in
-          # the stack so we can pop back 3 to find it
-          # 2) we know if we find an operator there is always an operand 1 back in
-          # the stack so we can pop back 2 to find it
-          # 3) we know if we find an operator that the head of the stack is an operator
-          # so we can pop back 1 to find it
-          # 4) if we find a lighter operator it wont interfere with the operator
+          # to make this work.
+          # 1) We know if we find an operator there is always an operator 2 back in
+          # the stack so we can pop back 3 to find it.
+          # 2) We know if we find an operator there is always an operand 1 back in
+          # the stack so we can pop back 2 to find it.
+          # 3) We know if we find an operator that the head of the stack is an operator
+          # so we can pop back 1 to find it.
+          # 4) If we find a lighter operator it wont interfere with the operator
           # that is 2 back in the stack, so we can safely pop that operator onto
-          # the rpn stack
+          # the rpn stack.
           stack_op = temp_stack.pop
           stack_val = temp_stack.pop
           stack_op2 = temp_stack.pop
@@ -99,13 +100,13 @@ class Infix
       end
     end
 
-    # we know that the remaining stack is in the correct reverse order, so we
-    # shovel the temp stack onto the rpn stack in reverse order
+    # We know that the remaining stack is in the correct reverse order, so we
+    # shovel the temp stack onto the rpn stack in reverse order.
     rpn_stack << temp_stack.reverse
     rpn_stack.flatten
   end
 
-  # compares precedence of operators, first >= second
+  # Compares precedence of operators, first >= second>
   def self.compare_precedence(curr_op, tracked_op)
     curr_op >= tracked_op
   end
