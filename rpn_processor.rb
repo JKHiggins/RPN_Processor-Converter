@@ -1,4 +1,4 @@
-OPERATORS = { '^' => 5, '*' => 4, '/' => 3, '+' => 2, '-' => 1 }
+OPERATORS = { '^' => 3, '*' => 2, '/' => 2, '+' => 1, '-' => 1 }
 
 class RPN
   def self.calculate(expression)
@@ -108,7 +108,7 @@ class Infix
 
   # Compares precedence of operators, first >= second>
   def self.compare_precedence(curr_op, tracked_op)
-    curr_op >= tracked_op
+    curr_op > tracked_op
   end
 end
 
@@ -128,6 +128,10 @@ infix_example4 = "1 - 1 * 9 + 0"
 infix_example5 = "2 ^ 3"
 infix_example6 = "1 + 2 * 120 / 63"
 infix_example7 = "1 - 5 * 3 + 2"
+
+complex_infix1 = "5 ^ 2 * 10 / 2 + 2 - 1"
+complex_infix2 = "5 - 2 + 10 / 2 * 2 ^ 1"
+complex_infix3 = "5 ^ 2 * 10 / 2 + 2 - 1 + 5 - 2 + 10 / 2 * 2 ^ 1"
 #  inputs
 
 #  answers
@@ -139,6 +143,7 @@ puts "Expression: #{rpn_example4} = #{RPN.calculate(rpn_example4)}"
 puts "Expression: #{rpn_example5} = #{RPN.calculate(rpn_example5)}"
 puts "Expression: #{rpn_example6} = #{RPN.calculate(rpn_example6)}"
 puts "Expression: #{rpn_example7} = #{RPN.calculate(rpn_example7)}"
+
 puts "\n\n\====== Infix ======\n\n"
 puts "Expression: #{infix_example1} = #{Infix.calculate(infix_example1)}"
 puts "Expression: #{infix_example2} = #{Infix.calculate(infix_example2)}"
@@ -147,6 +152,11 @@ puts "Expression: #{infix_example4} = #{Infix.calculate(infix_example4)}"
 puts "Expression: #{infix_example5} = #{Infix.calculate(infix_example5)}"
 puts "Expression: #{infix_example6} = #{Infix.calculate(infix_example6)}"
 puts "Expression: #{infix_example7} = #{Infix.calculate(infix_example7)}"
+
+puts "\n\n====== More Complicated Infix ======\n\n"
+puts "Expression: #{complex_infix1} = #{Infix.calculate(complex_infix1)}"
+puts "Expression: #{complex_infix2} = #{Infix.calculate(complex_infix2)}"
+puts "Expression: #{complex_infix3} = #{Infix.calculate(complex_infix3)}"
 #  answers
 
 #  for if you want to test more edge cases
